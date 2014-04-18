@@ -26,6 +26,6 @@ message Headers {
 
 message HeaderValue {
 	required string Key = 1;
-	repeated string Values = 2;
+	required string Value = 2;
 }
 

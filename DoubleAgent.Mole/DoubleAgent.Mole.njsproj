@@ -39,7 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Protowin.ts" />
-    <TypeScriptCompile Include="test.ts" />
+    <TypeScriptCompile Include="DoubleAgent.ts" />
     <TypeScriptCompile Include="ts\node.d.ts" />
     <TypeScriptCompile Include="Utils.ts" />
   </ItemGroup>

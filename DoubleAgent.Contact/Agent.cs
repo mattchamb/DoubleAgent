@@ -46,8 +46,8 @@ namespace DoubleAgent.Protowin {
           "ZVJlYXNvblBocmFzZRgEIAEoCRIYChBSZXNwb25zZVByb3RvY29sGAUgAigJ" + 
           "EjkKB1JlcXVlc3QYBiACKAsyKC5Eb3VibGVBZ2VudC5Qcm90b3dpbi5SZXF1" + 
           "ZXN0RW52aXJvbm1lbnQiOwoHSGVhZGVycxIwCgVWYWx1ZRgBIAMoCzIhLkRv" + 
-          "dWJsZUFnZW50LlByb3Rvd2luLkhlYWRlclZhbHVlIioKC0hlYWRlclZhbHVl" + 
-          "EgsKA0tleRgBIAIoCRIOCgZWYWx1ZXMYAiADKAk=");
+          "dWJsZUFnZW50LlByb3Rvd2luLkhlYWRlclZhbHVlIikKC0hlYWRlclZhbHVl" + 
+          "EgsKA0tleRgBIAIoCRINCgVWYWx1ZRgCIAIoCQ==");
       pbd::FileDescriptor.InternalDescriptorAssigner assigner = delegate(pbd::FileDescriptor root) {
         descriptor = root;
         internal__static_DoubleAgent_Protowin_RequestEnvironment__Descriptor = Descriptor.MessageTypes[0];
@@ -65,7 +65,7 @@ namespace DoubleAgent.Protowin {
         internal__static_DoubleAgent_Protowin_HeaderValue__Descriptor = Descriptor.MessageTypes[3];
         internal__static_DoubleAgent_Protowin_HeaderValue__FieldAccessorTable = 
             new pb::FieldAccess.FieldAccessorTable<global::DoubleAgent.Protowin.HeaderValue, global::DoubleAgent.Protowin.HeaderValue.Builder>(internal__static_DoubleAgent_Protowin_HeaderValue__Descriptor,
-                new string[] { "Key", "Values", });
+                new string[] { "Key", "Value", });
         return null;
       };
       pbd::FileDescriptor.InternalBuildGeneratedFileFrom(descriptorData,
@@ -1582,7 +1582,7 @@ namespace DoubleAgent.Protowin {
   public sealed partial class HeaderValue : pb::GeneratedMessage<HeaderValue, HeaderValue.Builder> {
     private HeaderValue() { }
     private static readonly HeaderValue defaultInstance = new HeaderValue().MakeReadOnly();
-    private static readonly string[] _headerValueFieldNames = new string[] { "Key", "Values" };
+    private static readonly string[] _headerValueFieldNames = new string[] { "Key", "Value" };
     private static readonly uint[] _headerValueFieldTags = new uint[] { 10, 18 };
     public static HeaderValue DefaultInstance {
       get { return defaultInstance; }
@@ -1614,21 +1614,20 @@ namespace DoubleAgent.Protowin {
       get { return key_; }
     }
     
-    public const int ValuesFieldNumber = 2;
-    private pbc::PopsicleList<string> values_ = new pbc::PopsicleList<string>();
-    public scg::IList<string> ValuesList {
-      get { return pbc::Lists.AsReadOnly(values_); }
+    public const int ValueFieldNumber = 2;
+    private bool hasValue;
+    private string value_ = "";
+    public bool HasValue {
+      get { return hasValue; }
     }
-    public int ValuesCount {
-      get { return values_.Count; }
-    }
-    public string GetValues(int index) {
-      return values_[index];
+    public string Value {
+      get { return value_; }
     }
     
     public override bool IsInitialized {
       get {
         if (!hasKey) return false;
+        if (!hasValue) return false;
         return true;
       }
     }
@@ -1639,8 +1638,8 @@ namespace DoubleAgent.Protowin {
       if (hasKey) {
         output.WriteString(1, field_names[0], Key);
       }
-      if (values_.Count > 0) {
-        output.WriteStringArray(2, field_names[1], values_);
+      if (hasValue) {
+        output.WriteString(2, field_names[1], Value);
       }
       UnknownFields.WriteTo(output);
     }
@@ -1655,13 +1654,8 @@ namespace DoubleAgent.Protowin {
         if (hasKey) {
           size += pb::CodedOutputStream.ComputeStringSize(1, Key);
         }
-        {
-          int dataSize = 0;
-          foreach (string element in ValuesList) {
-            dataSize += pb::CodedOutputStream.ComputeStringSizeNoTag(element);
-          }
-          size += dataSize;
-          size += 1 * values_.Count;
+        if (hasValue) {
+          size += pb::CodedOutputStream.ComputeStringSize(2, Value);
         }
         size += UnknownFields.SerializedSize;
         memoizedSerializedSize = size;
@@ -1700,7 +1694,6 @@ namespace DoubleAgent.Protowin {
       return ((Builder) CreateBuilder().MergeFrom(input, extensionRegistry)).BuildParsed();
     }
     private HeaderValue MakeReadOnly() {
-      values_.MakeReadOnly();
       return this;
     }
     
@@ -1791,8 +1784,8 @@ namespace DoubleAgent.Protowin {
         if (other.HasKey) {
           Key = other.Key;
         }
-        if (other.values_.Count != 0) {
-          result.values_.Add(other.values_);
+        if (other.HasValue) {
+          Value = other.Value;
         }
         this.MergeUnknownFields(other.UnknownFields);
         return this;
@@ -1842,7 +1835,7 @@ namespace DoubleAgent.Protowin {
               break;
             }
             case 18: {
-              input.ReadStringArray(tag, field_name, result.values_);
+              result.hasValue = input.ReadString(ref result.value_);
               break;
             }
           }
@@ -1876,35 +1869,24 @@ namespace DoubleAgent.Protowin {
         return this;
       }
       
-      public pbc::IPopsicleList<string> ValuesList {
-        get { return PrepareBuilder().values_; }
+      public bool HasValue {
+        get { return result.hasValue; }
       }
-      public int ValuesCount {
-        get { return result.ValuesCount; }
+      public string Value {
+        get { return result.Value; }
+        set { SetValue(value); }
       }
-      public string GetValues(int index) {
-        return result.GetValues(index);
-      }
-      public Builder SetValues(int index, string value) {
+      public Builder SetValue(string value) {
         pb::ThrowHelper.ThrowIfNull(value, "value");
         PrepareBuilder();
-        result.values_[index] = value;
+        result.hasValue = true;
+        result.value_ = value;
         return this;
       }
-      public Builder AddValues(string value) {
-        pb::ThrowHelper.ThrowIfNull(value, "value");
+      public Builder ClearValue() {
         PrepareBuilder();
-        result.values_.Add(value);
-        return this;
-      }
-      public Builder AddRangeValues(scg::IEnumerable<string> values) {
-        PrepareBuilder();
-        result.values_.Add(values);
-        return this;
-      }
-      public Builder ClearValues() {
-        PrepareBuilder();
-        result.values_.Clear();
+        result.hasValue = false;
+        result.value_ = "";
         return this;
       }
     }

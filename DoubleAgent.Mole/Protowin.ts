@@ -32,16 +32,25 @@ export class RequestEnv {
     }
 }
 
+export interface ResponseEnv {
+    ResponseBody: number[];
+    ResponseHeaders: Headers;
+    ResponseStatusCode: number;
+    ResponseReasonPhrase: string;
+    ResponseProtocol: string;
+    Request: RequestEnv;
+}
+
 export interface Headers {
     Value: HeaderValue[];
 }
 
 export interface HeaderValue {
     Key: string;
-    Values: string[];
+    Value: string;
 }
 
-export function createEncoder() {
+export function createProtoCoders() {
     var translator;
     proto2json.parse(fs.readFileSync("./agent.proto", "utf8"), function (err, result) {
         if (err) {
@@ -49,9 +58,19 @@ export function createEncoder() {
         }
         translator = new protobuf(result);
     });
-    return function (req: RequestEnv): NodeBuffer {
+    function encode(req: RequestEnv): NodeBuffer {
         var buf = <NodeBuffer>translator.encode('RequestEnvironment', req);
         return buf;
     }
+    function decode(data: NodeBuffer): ResponseEnv {
+        var ret = translator.decode("ResponseEnvironment", data);
+        return ret;
+    }
+    return {
+        encode: encode,
+        decode: decode
+    };
 }
+
+
 
