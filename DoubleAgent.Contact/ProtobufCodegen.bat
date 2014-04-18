@@ -1,0 +1,1 @@
+..\packages\Google.ProtocolBuffers.2.4.1.521\tools\ProtoGen.exe --proto_path=./../DoubleAgent.Mole agent.proto --include_imports -output_directory=./

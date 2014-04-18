@@ -1,0 +1,17 @@
+{
+  "name": "DoubleAgent.Mole",
+  "version": "0.0.0",
+  "description": "DoubleAgent.Mole",
+  "main": "server.js",
+  "author": {
+    "name": "Matthew",
+    "email": ""
+  },
+  "dependencies": {
+    "proto": "^1.0.9",
+    "protobuf.js": "^1.1.2",
+    "proto2json": "^0.1.0",
+    "guid": "0.0.12",
+    "uuid": "^1.4.1"
+  }
+}

@@ -1,0 +1,31 @@
+
+message RequestEnvironment {
+	required bytes RequestBody = 1;
+	required Headers RequestHeaders = 2;
+	required string RequestMethod = 3;
+	required string RequestPath = 4;
+	required string RequestPathBase = 5;
+	required string RequestProtocol = 6;
+	required string RequestQueryString = 7;
+	required string RequestScheme = 8;
+	required string CorrelationReference = 9;
+}
+
+message ResponseEnvironment {
+	required bytes ResponseBody = 1;
+	required Headers ResponseHeaders = 2;
+	required int32 ResponseStatusCode = 3;
+	optional string ResponseReasonPhrase = 4;
+	required string ResponseProtocol = 5;
+	required RequestEnvironment Request = 6;
+}
+
+message Headers {
+	repeated HeaderValue Value = 1;
+}
+
+message HeaderValue {
+	required string Key = 1;
+	repeated string Values = 2;
+}
+
