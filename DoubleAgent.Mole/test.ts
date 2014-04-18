@@ -1,48 +1,14 @@
-﻿/// <reference path="ts/node.d.ts" />
+﻿
+/// <reference path="Protowin.ts" />
+/// <reference path="Utils.ts" />
 
 import proc = require("child_process");
 import http = require("http");
 import url = require("url");
+import protowin = require("./Protowin");
+import utils = require("./Utils");
 
 var spawn = proc.spawn;
-
-var fs = require("fs");
-var protobuf = require("protobuf.js");
-var proto2json = require("proto2json");
-var uuid = require("uuid");
-
-
-
-// interface RequestEnv {
-//    body: NodeBuffer[];
-//    headers: Header[];
-//    method: string;
-//    path: string;
-//    pathBase: string;
-//    protocol: string;
-//    queryString: string;
-//    uriScheme: string;
-// }
-
-// This request should match the agent.proto definition.
-interface RequestEnv {
-    RequestBody: NodeBuffer;
-    RequestHeaders: Headers;
-    RequestMethod: string;
-    RequestPath: string;
-    RequestPathBase: string;
-    RequestProtocol: string;
-    RequestQueryString: string;
-    RequestScheme: string;
-    CorrelationReference: string;
-}
-interface Headers {
-    Value: HeaderValue[];
-}
-interface HeaderValue {
-    Key: string;
-    Values: string[];
-}
 
 class ContinuousDataReader {
     private currentExpectedLength: number;
@@ -67,9 +33,9 @@ class Mole {
     private contactProcess: proc.ChildProcess;
     private requests: any[];
 
-    private readBuffer: NodeBuffer;
-
-    constructor(private contactPath: string, private args: string[], private translator) {
+    constructor(private contactPath: string,
+                private args: string[],
+                private encoder: (env: protowin.RequestEnv) => NodeBuffer) {
         this.requests = [];
     }
 
@@ -84,25 +50,19 @@ class Mole {
         console.log(data);
     }
 
-    processRequest(request: RequestEnv, callback): void {
+    processRequest(request: utils.RequestData, callback): void {
         if (!this.contactProcess) {
             throw "The contact process must be spawned.";
         }
-        var correlationReference = uuid.v1();
-        request.CorrelationReference = correlationReference;
-        var handle = {
-            correlation: correlationReference,
-            callback: callback,
-            request: request
-        };
-        this.requests.push(handle);
-        var encodedRequest = this.encodeRequest(request);
-        this.writeBufferToProcess(encodedRequest);
-    }
 
-    private encodeRequest(req: RequestEnv) : NodeBuffer {
-        var buf = <NodeBuffer>this.translator.encode('RequestEnvironment', req);
-        return buf;
+        var env = new protowin.RequestEnv(request);
+
+        this.requests.push({
+            callback: callback,
+            request: env
+        });
+        var encodedRequest = this.encoder(env);
+        this.writeBufferToProcess(encodedRequest);
     }
 
     private writeBufferToProcess(buffer: NodeBuffer) : void {
@@ -115,39 +75,30 @@ class Mole {
 
 
 exports.Mole = function (path, args) {
-    var translator;
-    proto2json.parse(fs.readFileSync('./agent.proto', 'utf8'), function (err, result) {
-        if (err) {
-            console.log(err);
-        }
-        translator = new protobuf(result);
-    });
-    return new Mole(path, args, translator);
+    var encoder = protowin.createEncoder();
+    return new Mole(path, args, encoder);
 };
 
-exports.extractFields = function (req: http.ServerRequest): RequestEnv {
-    var h = [];
-    for (var headerKey in req.headers) {
-        h.push({
-            Key: headerKey,
-            Value: [req.headers[headerKey]]
-        });
-    }
+exports.prepareRequest = function (req: http.ServerRequest, callback: (data: utils.RequestData) => void): void {
+    var dataBuffers : NodeBuffer[] = [];
 
-    var asdf = url.parse(req.url);
+    req.on("data", function (data) {
+        dataBuffers.push(data);
+    });
+    req.on("end", function () {
+        var parsedUrl = url.parse(req.url);
 
+        var data = {
+            body: new Buffer(0),
+            headers: req.headers,
+            method: req.method,
+            path: "",
+            pathBase: parsedUrl.pathname,
+            httpVersion: req.httpVersion,
+            queryString: parsedUrl.search,
+            uriScheme: parsedUrl.protocol
+        };
 
-    return {
-        RequestBody: new Buffer(0),
-        RequestHeaders: {
-            Value: h
-        },
-        CorrelationReference: null,
-        RequestMethod: req.method,
-        RequestPath: "",
-        RequestPathBase: asdf.pathname,
-        RequestProtocol: req.httpVersion,
-        RequestQueryString: asdf.search,
-        RequestScheme: asdf.protocol
-    };
+        callback(data);
+    });
 };
