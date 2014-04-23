@@ -156,3 +156,15 @@ $RECYCLE.BIN/
 .DS_Store
 /DoubleAgent.Mole/node_modules
 /packages
+/DoubleAgent.Mole/DoubleAgent.js
+/DoubleAgent.Mole/DoubleAgent.js.map
+/DoubleAgent.Mole/log.txt
+/DoubleAgent.Mole/Protowin.js
+/DoubleAgent.Mole/Protowin.js.map
+/DoubleAgent.Mole/README.html
+/DoubleAgent.Mole/test.js
+/DoubleAgent.Mole/test.js.map
+/DoubleAgent.Mole/Util.js
+/DoubleAgent.Mole/Util.js.map
+/DoubleAgent.Mole/Utils.js
+/DoubleAgent.Mole/Utils.js.map
